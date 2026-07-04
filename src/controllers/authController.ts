@@ -56,10 +56,14 @@ if (role === "seller") {
 			business,
 			token,
 		});
-	} catch (error) {
-		console.error("Error during registration", error);
-		return res.status(500).json({ message: "Failed to register" });
-	}
+	} catch (error: any) {
+//   Postgres: código 23505 = violación de unique constraint (ej. email repetido)
+  if (error?.code === "23505") {
+    return res.status(409).json({ message: "El correo ya está registrado" });
+  }
+  console.error("Error during registration", error);
+  return res.status(500).json({ message: "El correo ya está registrado" });
+}
 };
 
 // POST /auth/login

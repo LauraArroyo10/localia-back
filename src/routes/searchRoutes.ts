@@ -20,8 +20,9 @@ const globalSearchQuerySchema = z.object({
 const nearbyQuerySchema = z.object({
 	lat: z.coerce.number().min(-90).max(90),
 	lng: z.coerce.number().min(-180).max(180),
-	radius: z.coerce.number().positive().default(5), // km
-	minReviews: z.coerce.number().int().nonnegative().default(3), // mínimo de comentarios
+	radius: z.coerce.number().positive().default(5),
+	minReviews: z.coerce.number().int().nonnegative().default(3),
+	page: z.coerce.number().int().positive().default(1),
 	limit: z.coerce.number().int().positive().default(10),
 });
 

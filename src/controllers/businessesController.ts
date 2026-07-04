@@ -72,6 +72,8 @@ export const getBusinesses = async (req: Request, res: Response, next: NextFunct
     }
 };
 
+
+
 //GET /api/businesses/featured
 export const getFeaturedBusinesses = async (req: Request, res: Response, next: NextFunction) => {
     try {
@@ -127,6 +129,40 @@ export const getBusinessById = async (req: Request, res: Response, next: NextFun
         next(error);
     }
 };
+
+
+
+
+export const getMyBusiness = async (
+    req: any,
+    res: Response,
+    next: NextFunction
+) => {
+    try {
+        const business = await db
+            .select()
+            .from(businesses)
+            .where(eq(businesses.owner_id, req.user.id))
+            .limit(1);
+
+        if (business.length === 0) {
+            return res.status(404).json({
+                message: "Business not found",
+            });
+        }
+
+        return res.json({
+            message: "Business fetched successfully",
+            data: {
+                ...business[0],
+                location: `${business[0].address ?? ""}, ${business[0].city ?? ""}`,
+            },
+        });
+    } catch (error) {
+        next(error);
+    }
+};
+
 
 //POST /api/businesses
 export const createBusiness = async (req: any, res: Response, next: NextFunction) => {

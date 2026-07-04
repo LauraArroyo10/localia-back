@@ -4,9 +4,11 @@ console.log("Reviews routes loaded");
 import {
   getReviews,
   createReview,
+  updateReview,
   markHelpful,
+  deleteReview,
 } from "../controllers/reviewsController";
-import { authenticateToken } from "../middleware/auth";
+import { authenticateToken,authenticateTokenOptional } from "../middleware/auth";
 import { validateBody, validateParams, validateQuery } from "../middleware/validations";
 
 const router = Router({ mergeParams: true });
@@ -26,18 +28,29 @@ const createReviewSchema = z.object({
   body: z.string(),
 });
 
+const updateReviewSchema = z.object({
+  rating: z.number(),
+  title: z.string(),
+  body: z.string(),
+});
+
+
 const paginationSchema = z.object({
   page: z.string().optional(),
   limit: z.string().optional(),
 });
 
+
+
 // GET /businesses/:id/reviews
 router.get(
   "/:id/reviews",
+  authenticateTokenOptional,
   validateParams(businessIdSchema),
   validateQuery(paginationSchema),
   getReviews
 );
+
 
 // POST /businesses/:id/reviews
 router.post(
@@ -48,11 +61,21 @@ router.post(
   createReview
 );
 
+// PUT /reviews/:reviewId
+router.put(
+  "/reviews/:reviewId",
+  authenticateToken,
+  validateParams(reviewIdSchema),
+  validateBody(updateReviewSchema),
+  updateReview
+);
+
 // DELETE /reviews/:reviewId
 router.delete(
   "/reviews/:reviewId",
   authenticateToken,
   validateParams(reviewIdSchema),
+  deleteReview
 );
 
 // POST /reviews/:reviewId/helpful
@@ -62,5 +85,13 @@ router.post(
   validateParams(reviewIdSchema),
   markHelpful
 );
+
+
+
+
+
+
+
+
 
 export default router;
