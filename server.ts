@@ -1,5 +1,6 @@
 import env from "./env";
 import app from "./src/app";
+import express from "express";
 
 // import created routes
 // import userRoutes from './src/routes/userRoutes';
@@ -8,12 +9,16 @@ import reviewsRoutes from "./src/routes/reviewsRoutes";
 import businessRoutes from "./src/routes/businessesRoutes";
 import searchRoutes from "./src/routes/searchRoutes";
 import favoritesRoutes from "./src/routes/favoritesRoutes";
+import productsRoutes from "./src/routes/productsRoutes";
 
 app.use("/auth", authRoutes);
 app.use("/api/businesses", businessRoutes);
 app.use("/api/businesses", reviewsRoutes);
 app.use("/api/search", searchRoutes);
 app.use("/users", favoritesRoutes);
+app.use("/api/products", productsRoutes);
+
+app.use("/uploads", express.static("uploads"));
 
 app.use("/api", (_req, res) => {
 	res.status(404).json({ message: "Endpoint not found" });
