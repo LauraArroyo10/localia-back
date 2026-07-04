@@ -7,6 +7,7 @@ import {
 	text,
 	timestamp,
 	uuid,
+	unique
 } from "drizzle-orm/pg-core";
 import { createInsertSchema, createSelectSchema } from "drizzle-zod";
 
@@ -27,6 +28,12 @@ export const categoryEnum = pgEnum("category", [
 	"Accommodation",
 	"Transport",
 	"Shopping",
+	"Artisan Goods",
+	"Local Food",
+	"Culture",
+	"Beach",
+	"Mountain",
+	"Town",
 ]);
 
 // ─── Users ────────────────────────────────────────────────────────────────────
@@ -94,6 +101,35 @@ export type Review = typeof reviews.$inferSelect;
 export const insertReviewSchema = createInsertSchema(reviews);
 export const selectReviewSchema = createSelectSchema(reviews);
 
+
+
+// ─── Review Helpful Votes ───────────────────────────────────────────────────
+
+export const reviewHelpfulVotes = pgTable(
+	"review_helpful_votes",
+	{
+		id: uuid("id").primaryKey().defaultRandom(),
+		review_id: uuid("review_id")
+			.notNull()
+			.references(() => reviews.id, { onDelete: "cascade" }),
+		user_id: uuid("user_id")
+			.notNull()
+			.references(() => users.id, { onDelete: "cascade" }),
+		created_at: timestamp("created_at").defaultNow().notNull(),
+	},
+	(table) => ({
+		uniqueVote: unique().on(table.review_id, table.user_id), 
+	})
+);
+
+export type ReviewHelpfulVote = typeof reviewHelpfulVotes.$inferSelect;
+export const insertReviewHelpfulVoteSchema = createInsertSchema(reviewHelpfulVotes);
+
+
+export const reviewHelpfulVotesRelations = relations(reviewHelpfulVotes, ({ one }) => ({
+	review: one(reviews, { fields: [reviewHelpfulVotes.review_id], references: [reviews.id] }),
+	user: one(users, { fields: [reviewHelpfulVotes.user_id], references: [users.id] }),
+}));
 // ─── Favorites ────────────────────────────────────────────────────────────────
 
 export const favorites = pgTable("favorites", {

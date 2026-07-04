@@ -6,7 +6,9 @@ import { businesses, categoryEnum, reviews } from "../db/schema";
 //GET /api/search/businesses (Búsqueda Full-Text y filtros)
 export const searchBusinesses = async (req: Request, res: Response, next: NextFunction) => {
 	try {
-		const { q, category, type, city, page, limit } = req.query as any;
+		const { q, category, type, city } = req.query as any;
+		const page = Number(req.query.page) || 1;
+		const limit = Number(req.query.limit) || 10;
 		const offset = (page - 1) * limit;
 
 		const conditions = [];
@@ -72,7 +74,16 @@ export const getCategories = async (req: Request, res: Response, next: NextFunct
 // GET /api/search/nearby (Negocios cercanos con suficientes reseñas)
 export const getNearbyBusinesses = async (req: Request, res: Response, next: NextFunction) => {
 	try {
-		const { lat, lng, radius, minReviews, limit } = req.query as any;
+		const lat = Number(req.query.lat);
+		const lng = Number(req.query.lng);
+		const radius = Number(req.query.radius) || 300;
+		const minReviews = Number(req.query.minReviews) || 0;
+		const limit = Number(req.query.limit) || 10;
+		const category = req.query.category as string | undefined;
+
+		if (Number.isNaN(lat) || Number.isNaN(lng)) {
+			return res.status(400).json({ message: "lat and lng are required and must be valid numbers" });
+		}
 
 		const distanceExpr = sql<number>`
 			(6371 * acos(
@@ -83,6 +94,8 @@ export const getNearbyBusinesses = async (req: Request, res: Response, next: Nex
 				))
 			))
 		`;
+
+		const whereClause = category ? eq(businesses.category, category as any) : undefined;
 
 		const results = await db
 			.select({
@@ -101,6 +114,7 @@ export const getNearbyBusinesses = async (req: Request, res: Response, next: Nex
 			})
 			.from(businesses)
 			.leftJoin(reviews, eq(businesses.id, reviews.business_id))
+			.where(whereClause)
 			.groupBy(businesses.id)
 			.having(sql`count(${reviews.id}) >= ${minReviews} AND ${distanceExpr} <= ${radius}`)
 			.orderBy(sql`distance ASC`)
@@ -108,10 +122,12 @@ export const getNearbyBusinesses = async (req: Request, res: Response, next: Nex
 
 		return res.json({
 			message: "Nearby businesses with enough reviews fetched successfully",
-			meta: { lat, lng, radius, minReviews, limit },
+			meta: { lat, lng, radius, minReviews, limit, category },
 			data: results,
 		});
 	} catch (error) {
+		console.error("Nearby query error:", error);
+		console.error("Cause:", (error as any)?.cause);
 		next(error);
 	}
 };

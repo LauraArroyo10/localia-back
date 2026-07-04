@@ -16,7 +16,8 @@ import {
     getBusinessById,
     createBusiness,
     updateBusiness,
-    deleteBusiness
+    deleteBusiness,
+    getMyBusiness
 } from "../controllers/businessesController";
 
 const router = Router();
@@ -24,7 +25,10 @@ const router = Router();
 // Cada ruta se vuelve una sola línea hiper legible:
 router.get("/", validateQuery(businessQuerySchema), getBusinesses);
 router.get("/featured", getFeaturedBusinesses);
+router.get("/me", authenticateToken, getMyBusiness);
 router.get("/:id", validateParams(idParamSchema), getBusinessById);
+
+
 
 router.post("/", authenticateToken, uploadBusinessImage.single("image"), validateBody(createBusinessBodySchema), createBusiness);
 router.put("/:id", authenticateToken, validateParams(idParamSchema), uploadBusinessImage.single("image"), validateBody(updateBusinessBodySchema), updateBusiness);
