@@ -5,6 +5,7 @@ import db from "../db/connection";
 import { users } from "../db/schema";
 import { generateToken } from "../utils/jwt";
 import { comparePasswords, hashPassword } from "../utils/passwords";
+import { businesses } from "../db/schema";
 
 // POST /auth/register
 // Crea un nuevo usuario, hashea su contraseña, guarda en DB y devuelve JWT + datos del usuario
@@ -31,6 +32,17 @@ export const register = async (req: Request, res: Response) => {
 				location: users.location,
 				created_at: users.created_at,
 			});
+		let business = null;
+
+if (role === "seller") {
+  const biz = await db
+    .select()
+    .from(businesses)
+    .where(eq(businesses.owner_id, user.id))
+    .limit(1);
+
+  business = biz[0] || null;
+}
 
 		const token = await generateToken({
 			id: user.id,
@@ -41,6 +53,7 @@ export const register = async (req: Request, res: Response) => {
 		return res.status(201).json({
 			message: "User registered",
 			user,
+			business,
 			token,
 		});
 	} catch (error: any) {
@@ -74,6 +87,18 @@ console.log("Usuario encontrado:", user);
 			return res.status(401).json({ message: "Invalid credentials" });
 		}
 
+		let business = null;
+
+if (user.role === "seller") {
+  const biz = await db
+    .select()
+    .from(businesses)
+    .where(eq(businesses.owner_id, user.id))
+    .limit(1);
+
+  business = biz[0] || null;
+}
+
 		const token = await generateToken({
 			id: user.id,
 			email: user.email,
@@ -90,6 +115,7 @@ console.log("Usuario encontrado:", user);
 				avatar: user.avatar,
 				location: user.location,
 			},
+			business,
 			token,
 		});
 	} catch (error) {

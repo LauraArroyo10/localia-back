@@ -147,6 +147,28 @@ export type Favorite = typeof favorites.$inferSelect;
 export const insertFavoriteSchema = createInsertSchema(favorites);
 export const selectFavoriteSchema = createSelectSchema(favorites);
 
+// ─── Products ────────────────────────────────────────────────────────────────
+
+export const products = pgTable("products", {
+	id: uuid("id").primaryKey().defaultRandom(),
+
+	business_id: uuid("business_id")
+		.notNull()
+		.references(() => businesses.id, { onDelete: "cascade" }),
+
+	image: text("image").notNull(),
+	name: text("name").notNull(),
+	description: text("description"),
+	price: decimal("price", { precision: 10, scale: 2 }).notNull(),
+
+	created_at: timestamp("created_at").defaultNow().notNull(),
+	updated_at: timestamp("updated_at").defaultNow().notNull(),
+});
+
+export type Product = typeof products.$inferSelect;
+export const insertProductSchema = createInsertSchema(products);
+export const selectProductSchema = createSelectSchema(products);
+
 // ─── Relations ────────────────────────────────────────────────────────────────
 
 export const usersRelations = relations(users, ({ many }) => ({
@@ -159,6 +181,7 @@ export const businessesRelations = relations(businesses, ({ one, many }) => ({
 	owner: one(users, { fields: [businesses.owner_id], references: [users.id] }),
 	reviews: many(reviews),
 	favorites: many(favorites),
+	products: many(products),
 }));
 
 export const reviewsRelations = relations(reviews, ({ one }) => ({
@@ -173,6 +196,13 @@ export const favoritesRelations = relations(favorites, ({ one }) => ({
 	user: one(users, { fields: [favorites.user_id], references: [users.id] }),
 	business: one(businesses, {
 		fields: [favorites.business_id],
+		references: [businesses.id],
+	}),
+}));
+
+export const productsRelations = relations(products, ({ one }) => ({
+	business: one(businesses, {
+		fields: [products.business_id],
 		references: [businesses.id],
 	}),
 }));

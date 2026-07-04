@@ -8,6 +8,12 @@ if (!fs.existsSync(uploadPath)) {
 	fs.mkdirSync(uploadPath, { recursive: true });
 }
 
+const productUploadPath = path.join(process.cwd(), "uploads", "products");
+
+if (!fs.existsSync(productUploadPath)) {
+	fs.mkdirSync(productUploadPath, { recursive: true });
+}
+
 const storage = multer.diskStorage({
 	destination: (_req, _file, cb) => {
 		cb(null, uploadPath);
@@ -16,6 +22,22 @@ const storage = multer.diskStorage({
 	filename: (_req, file, cb) => {
 		const uniqueName =
 			Date.now() + "-" + Math.round(Math.random() * 1e9) + path.extname(file.originalname);
+
+		cb(null, uniqueName);
+	},
+});
+
+const productStorage = multer.diskStorage({
+	destination: (_req, _file, cb) => {
+		cb(null, productUploadPath);
+	},
+
+	filename: (_req, file, cb) => {
+		const uniqueName =
+			Date.now() +
+			"-" +
+			Math.round(Math.random() * 1e9) +
+			path.extname(file.originalname);
 
 		cb(null, uniqueName);
 	},
@@ -36,5 +58,13 @@ export const uploadBusinessImage = multer({
 	fileFilter,
 	limits: {
 		fileSize: 5 * 1024 * 1024, // 5MB máximo
+	},
+});
+
+export const uploadProductImage = multer({
+	storage: productStorage,
+	fileFilter,
+	limits: {
+		fileSize: 5 * 1024 * 1024,
 	},
 });
