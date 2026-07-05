@@ -7,9 +7,8 @@ import {
     updateBusinessBodySchema, 
     idParamSchema, 
     businessQuerySchema 
-} from "../controllers/businessesController"; // O donde tengas guardados tus esquemas de Zod
+} from "../controllers/businessesController"; 
 
-// Importamos los controladores que manejan la lógica real
 import {
     getBusinesses,
     getFeaturedBusinesses,
@@ -22,16 +21,33 @@ import {
 
 const router = Router();
 
-// Cada ruta se vuelve una sola línea hiper legible:
-router.get("/", validateQuery(businessQuerySchema), getBusinesses);
+
 router.get("/featured", getFeaturedBusinesses);
-router.get("/me", authenticateToken, getMyBusiness);
+router.get("/my-business", authenticateToken, getMyBusiness); 
+
+
+router.get("/", validateQuery(businessQuerySchema), getBusinesses);
+
+
 router.get("/:id", validateParams(idParamSchema), getBusinessById);
 
+router.post(
+    "/", 
+    authenticateToken, 
+    uploadBusinessImage.single("image"), // 1. Procesa y guarda el archivo en 'uploads/businesses'
+    validateBody(createBusinessBodySchema), // 2. Valida los campos de texto restantes
+    createBusiness
+);
 
+router.put(
+    "/:id", 
+    authenticateToken, 
+    validateParams(idParamSchema), 
+    uploadBusinessImage.single("image"), // 1. Intercepta el archivo binario si viene en la edición
+    validateBody(updateBusinessBodySchema), // 2. Valida las propiedades editadas
+    updateBusiness
+);
 
-router.post("/", authenticateToken, uploadBusinessImage.single("image"), validateBody(createBusinessBodySchema), createBusiness);
-router.put("/:id", authenticateToken, validateParams(idParamSchema), uploadBusinessImage.single("image"), validateBody(updateBusinessBodySchema), updateBusiness);
 router.delete("/:id", authenticateToken, validateParams(idParamSchema), deleteBusiness);
 
-export default router;  
+export default router;

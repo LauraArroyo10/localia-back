@@ -14,6 +14,11 @@ if (!fs.existsSync(productUploadPath)) {
 	fs.mkdirSync(productUploadPath, { recursive: true });
 }
 
+const touristUploadPath = path.join(process.cwd(), "uploads", "tourists");
+if (!fs.existsSync(touristUploadPath)) {
+    fs.mkdirSync(touristUploadPath, { recursive: true });
+}
+
 const storage = multer.diskStorage({
 	destination: (_req, _file, cb) => {
 		cb(null, uploadPath);
@@ -43,6 +48,17 @@ const productStorage = multer.diskStorage({
 	},
 });
 
+const touristStorage = multer.diskStorage({
+    destination: (_req, _file, cb) => {
+        cb(null, touristUploadPath);
+    },
+    filename: (_req, file, cb) => {
+        const uniqueName =
+            Date.now() + "-" + Math.round(Math.random() * 1e9) + path.extname(file.originalname);
+        cb(null, uniqueName);
+    },
+});
+
 const fileFilter = (_req: any, file: Express.Multer.File, cb: multer.FileFilterCallback) => {
 	const allowedMimeTypes = ["image/jpeg", "image/png", "image/webp"];
 
@@ -67,4 +83,12 @@ export const uploadProductImage = multer({
 	limits: {
 		fileSize: 5 * 1024 * 1024,
 	},
+});
+
+export const uploadTouristImage = multer({
+    storage: touristStorage,
+    fileFilter,
+    limits: {
+        fileSize: 5 * 1024 * 1024,
+    },
 });

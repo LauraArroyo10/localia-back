@@ -48,6 +48,7 @@ if (role === "seller") {
 			id: user.id,
 			email: user.email,
 			role: user.role,
+			avatar: user.avatar
 		});
 
 		return res.status(201).json({
@@ -102,6 +103,7 @@ if (user.role === "seller") {
 			id: user.id,
 			email: user.email,
 			role: user.role,
+			avatar: user.avatar,
 		});
 
 		return res.status(200).json({
