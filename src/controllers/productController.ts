@@ -116,9 +116,43 @@ export const deleteProduct = async (
 	try {
 		const { id } = req.params;
 
+		// Solo los vendedores pueden eliminar productos
 		if (req.user?.role !== "seller") {
 			return res.status(403).json({
 				message: "Only sellers can delete products",
+			});
+		}
+
+		// Buscar el producto
+		const product = await db
+			.select()
+			.from(products)
+			.where(eq(products.id, id))
+			.limit(1);
+
+		if (!product.length) {
+			return res.status(404).json({
+				message: "Product not found",
+			});
+		}
+
+		// Buscar el negocio al que pertenece
+		const business = await db
+			.select()
+			.from(businesses)
+			.where(eq(businesses.id, product[0].business_id))
+			.limit(1);
+
+		if (!business.length) {
+			return res.status(404).json({
+				message: "Business not found",
+			});
+		}
+
+		// Verificar que el negocio sea del usuario autenticado
+		if (business[0].owner_id !== req.user.id) {
+			return res.status(403).json({
+				message: "You are not allowed to delete this product",
 			});
 		}
 
@@ -126,12 +160,6 @@ export const deleteProduct = async (
 			.delete(products)
 			.where(eq(products.id, id))
 			.returning();
-
-		if (!deleted) {
-			return res.status(404).json({
-				message: "Product not found",
-			});
-		}
 
 		return res.json({
 			message: "Product deleted successfully",

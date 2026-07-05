@@ -18,7 +18,7 @@ Carlos Sandoval
 Jorge Miranda Loría
 
 ## Fecha
-29-06-2025
+06-07-2025
 
 ---
 
@@ -27,22 +27,8 @@ En si Localía es una web que permite encontrar puestos locales de alimentacion,
 Este proyecto es el backend de la aplicacion web Localía y busca conectar la base de datos con el front del proyeto.
 ---
 
-## 3. Objetivos
 
-### Objetivo general
-Qué quieres lograr con el proyecto.
-
----
-
-## 4. Lo aprendido en clase
-
--
--
--
-
----
-
-## 5. Tecnologías usadas
+## 3. Tecnologías usadas
 
 ### Runtime & Lenguaje
 - **Node.js** — entorno de ejecución
@@ -73,24 +59,3 @@ Qué quieres lograr con el proyecto.
 - **ts-node 10.9.2** — ejecución de TypeScript sin compilar
 ---
 
-## 6. Uso de inteligencia artificial
-
-### Herramientas usadas
--ChatGPT
--Claude
--Copilot
-
-### Para qué se usó
-- Resolver dudas
-- Entender errores
-- Aprender conceptos
-- Revision de código
-- Sugerencias de arquitectura y practicas de programacion
-- Investigacion de librerias
-- Generacion de mockdata
----
-
-### Ejemplos de prompts
-
-```txt id="prompt1"
-"Cómo usar TanStack Router en React"

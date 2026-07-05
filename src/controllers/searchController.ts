@@ -78,7 +78,9 @@ export const getNearbyBusinesses = async (req: Request, res: Response, next: Nex
 		const lng = Number(req.query.lng);
 		const radius = Number(req.query.radius) || 300;
 		const minReviews = Number(req.query.minReviews) || 0;
+		const page = Number(req.query.page) || 1;
 		const limit = Number(req.query.limit) || 10;
+		const offset = (page - 1) * limit;
 		const category = req.query.category as string | undefined;
 
 		if (Number.isNaN(lat) || Number.isNaN(lng)) {
@@ -118,16 +120,16 @@ export const getNearbyBusinesses = async (req: Request, res: Response, next: Nex
 			.groupBy(businesses.id)
 			.having(sql`count(${reviews.id}) >= ${minReviews} AND ${distanceExpr} <= ${radius}`)
 			.orderBy(sql`distance ASC`)
-			.limit(limit);
+			.limit(limit)
+			.offset(offset);
 
 		return res.json({
 			message: "Nearby businesses with enough reviews fetched successfully",
-			meta: { lat, lng, radius, minReviews, limit, category },
+			meta: { lat, lng, radius, minReviews, page, limit, category },
 			data: results,
 		});
 	} catch (error) {
-		console.error("Nearby query error:", error);
-		console.error("Cause:", (error as any)?.cause);
 		next(error);
 	}
+
 };
