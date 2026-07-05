@@ -25,9 +25,9 @@
 
 ### Ejemplos de prompts
 
-
-### 1
 ---
+### 1
+
 Estoy desarrollando un proyecto con la siguiente arquitectura:
 
 Frontend:
@@ -65,10 +65,10 @@ Backend:
 
 Base de datos:
 - Neon PostgreSQL
----
 
-### 2
 ---
+### 2
+
 Quiero que toda la respuesta esté basada principalmente en la documentación oficial de TanStack, siguiendo las mejores prácticas recomendadas por el equipo de TanStack.
 
 Estos son los archivos actuales de mi proyecto que sirven como referencia para entender mi estructura:
@@ -104,8 +104,8 @@ Necesito que respondas lo siguiente:
 11. Si detectas aspectos de mi arquitectura que podrían mejorarse, indícalos y justifica cada recomendación.
 
 Cuando cites una práctica o recomendación, indica si proviene de la documentación oficial de TanStack o si corresponde a una convención ampliamente adoptada por la comunidad.
----
 
+---
 ### 3
 
 Quiero que revises **todo el proyecto** y realices únicamente cambios relacionados con el formato y las reglas de Biome.
@@ -144,40 +144,25 @@ Objetivos:
 
 La prioridad es que el proyecto quede limpio, consistente y sin errores de formato o lint según Biome, sin introducir cambios funcionales.
 
-##4
-Quiero que hagas una AUDITORÍA DE CÓDIGO de este proyecto. NO hagas ningún cambio, 
-NO edites archivos, NO ejecutes comandos que modifiquen algo. Es solo lectura y reporte.
+---
+### 4
 
-Revisa el frontend (React/TypeScript, TanStack Router, Zustand, Tailwind v4) y el 
-backend (Express/TypeScript, Drizzle ORM, PostgreSQL/Neon) buscando:
 
-1. **Código muerto o innecesario**: funciones sin usar, imports sin usar, componentes 
-   que ya no se renderizan en ningún lado, rutas duplicadas.
+Estoy desarrollando una aplicación con React, TanStack Router, Zustand y un backend en Express. Tengo un problema con el flujo de registro de usuarios con rol "seller". Cuando un usuario se registra por primera vez, es redirigido automáticamente al Dashboard. Sin embargo, en ese primer ingreso no aparecen los productos destacados, el botón "View all products" ni la sección de reseñas. Si el usuario cierra sesión e inicia sesión nuevamente con las mismas credenciales, todo aparece correctamente.
 
-2. **Repetición**: lógica copiada en varios archivos que debería estar en un hook, 
-   util o middleware compartido (ej: validaciones repetidas, fetch calls similares 
-   sin abstraer).
+En el Dashboard renderizo esas secciones solo si existe "user.business.id", obtenido desde el estado de autenticación (useAuth). Durante ese primer ingreso, "user.role" es "seller", pero "user.business.id" es "undefined". Después de volver a iniciar sesión, "user.business.id" ya tiene un valor y todo funciona correctamente.
 
-3. **Console.logs y debug sueltos**: cualquier console.log, console.error de debug, 
-   debugger, o comentarios tipo "
+¿Cuál podría ser el problema, y como se podría solucionar?
 
-4. **Lógica rara o frágil**: condicionales innecesariamente complejos, manejo de 
-   errores inconsistente (a veces try/catch, a veces no), estados que se pueden 
-   derivar pero están duplicados en el store, mutaciones directas donde debería 
-   haber inmutabilidad.
+---
+### 5
 
-5. **Problemas de arquitectura**: 
-   - Componentes que mezclan lógica de negocio con presentación
-   - Falta de separación entre lógica pura y llamadas a API/DB (dificulta testing)
-   - Inconsistencias en el manejo de tipos entre frontend y backend (mismatches 
-     de field names, interfaces duplicadas en vez de compartidas)
-   - Rutas de Express mal ordenadas (estáticas vs dinámicas)
-   - Falta de índices o queries ineficientes en Drizzle
+Estoy trabajando en el backend de una aplicación con Express. Las imágenes se suben correctamente y la ruta se guarda en la base de datos. Además, si copio la URL de una imagen y la abro directamente en el navegador, la imagen se muestra sin problemas. Sin embargo, cuando el frontend intenta cargar esa misma imagen, no se ve y en la consola del navegador aparece un error de "CORP (not same-origin)". ¿Qué podría estar mal en la configuración del backend? ¿Qué archivos o configuraciones debería revisar para encontrar y solucionar el problema?
 
-Por cada hallazgo dame:
-- Archivo y línea (aproximada)
-- Qué está mal y por qué importa
-- Severidad (crítico / moderado / cosmético)
-- Sugerencia breve de solución (sin implementarla)
+---
+### 6
 
-Termina con un resumen priorizado: qué 3-5 cosas atacaría primero.
+Una compañera me recomendó usar la librería Sonner para mostrar notificaciones en el proyecto de React, pero nunca la he utilizado. ¿Cómo se implementa en un proyecto? ¿Cómo se muestran las notificaciones y qué opciones ofrece la librería? También me gustaría saber cómo se pueden personalizar los mensajes, por ejemplo cambiar colores, bordes, duración, botones o  crear un diseño personalizado. Explícame cómo funciona la librería, cuáles son las formas más comunes de usarla y en qué casos conviene utilizar cada una. Incluye ejemplos sencillos para entender mejor cómo se usa.
+
+---
+### 7
