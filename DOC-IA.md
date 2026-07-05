@@ -25,9 +25,9 @@
 
 ### Ejemplos de prompts
 
-
-### 1
 ---
+### 1
+
 Estoy desarrollando un proyecto con la siguiente arquitectura:
 
 Frontend:
@@ -65,10 +65,10 @@ Backend:
 
 Base de datos:
 - Neon PostgreSQL
----
 
-### 2
 ---
+### 2
+
 Quiero que toda la respuesta esté basada principalmente en la documentación oficial de TanStack, siguiendo las mejores prácticas recomendadas por el equipo de TanStack.
 
 Estos son los archivos actuales de mi proyecto que sirven como referencia para entender mi estructura:
@@ -104,8 +104,8 @@ Necesito que respondas lo siguiente:
 11. Si detectas aspectos de mi arquitectura que podrían mejorarse, indícalos y justifica cada recomendación.
 
 Cuando cites una práctica o recomendación, indica si proviene de la documentación oficial de TanStack o si corresponde a una convención ampliamente adoptada por la comunidad.
----
 
+---
 ### 3
 
 Quiero que revises **todo el proyecto** y realices únicamente cambios relacionados con el formato y las reglas de Biome.
@@ -143,3 +143,26 @@ Objetivos:
 10. Trabaja archivo por archivo hasta dejar todo el proyecto completamente compatible con Biome.
 
 La prioridad es que el proyecto quede limpio, consistente y sin errores de formato o lint según Biome, sin introducir cambios funcionales.
+
+---
+### 4
+
+
+Estoy desarrollando una aplicación con React, TanStack Router, Zustand y un backend en Express. Tengo un problema con el flujo de registro de usuarios con rol "seller". Cuando un usuario se registra por primera vez, es redirigido automáticamente al Dashboard. Sin embargo, en ese primer ingreso no aparecen los productos destacados, el botón "View all products" ni la sección de reseñas. Si el usuario cierra sesión e inicia sesión nuevamente con las mismas credenciales, todo aparece correctamente.
+
+En el Dashboard renderizo esas secciones solo si existe "user.business.id", obtenido desde el estado de autenticación (useAuth). Durante ese primer ingreso, "user.role" es "seller", pero "user.business.id" es "undefined". Después de volver a iniciar sesión, "user.business.id" ya tiene un valor y todo funciona correctamente.
+
+¿Cuál podría ser el problema, y como se podría solucionar?
+
+---
+### 5
+
+Estoy trabajando en el backend de una aplicación con Express. Las imágenes se suben correctamente y la ruta se guarda en la base de datos. Además, si copio la URL de una imagen y la abro directamente en el navegador, la imagen se muestra sin problemas. Sin embargo, cuando el frontend intenta cargar esa misma imagen, no se ve y en la consola del navegador aparece un error de "CORP (not same-origin)". ¿Qué podría estar mal en la configuración del backend? ¿Qué archivos o configuraciones debería revisar para encontrar y solucionar el problema?
+
+---
+### 6
+
+Una compañera me recomendó usar la librería Sonner para mostrar notificaciones en el proyecto de React, pero nunca la he utilizado. ¿Cómo se implementa en un proyecto? ¿Cómo se muestran las notificaciones y qué opciones ofrece la librería? También me gustaría saber cómo se pueden personalizar los mensajes, por ejemplo cambiar colores, bordes, duración, botones o  crear un diseño personalizado. Explícame cómo funciona la librería, cuáles son las formas más comunes de usarla y en qué casos conviene utilizar cada una. Incluye ejemplos sencillos para entender mejor cómo se usa.
+
+---
+### 7
