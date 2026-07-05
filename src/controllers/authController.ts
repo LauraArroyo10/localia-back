@@ -75,8 +75,7 @@ export const login = async (req: Request, res: Response) => {
 		const user = await db.query.users.findFirst({
 			where: eq(users.email, email),
 		});
-console.log("Email recibido:", email);
-console.log("Usuario encontrado:", user);
+
 		if (!user) {
 			return res.status(401).json({ message: "Invalid credentials" });
 		}

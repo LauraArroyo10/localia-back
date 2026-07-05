@@ -143,3 +143,41 @@ Objetivos:
 10. Trabaja archivo por archivo hasta dejar todo el proyecto completamente compatible con Biome.
 
 La prioridad es que el proyecto quede limpio, consistente y sin errores de formato o lint según Biome, sin introducir cambios funcionales.
+
+##4
+Quiero que hagas una AUDITORÍA DE CÓDIGO de este proyecto. NO hagas ningún cambio, 
+NO edites archivos, NO ejecutes comandos que modifiquen algo. Es solo lectura y reporte.
+
+Revisa el frontend (React/TypeScript, TanStack Router, Zustand, Tailwind v4) y el 
+backend (Express/TypeScript, Drizzle ORM, PostgreSQL/Neon) buscando:
+
+1. **Código muerto o innecesario**: funciones sin usar, imports sin usar, componentes 
+   que ya no se renderizan en ningún lado, rutas duplicadas.
+
+2. **Repetición**: lógica copiada en varios archivos que debería estar en un hook, 
+   util o middleware compartido (ej: validaciones repetidas, fetch calls similares 
+   sin abstraer).
+
+3. **Console.logs y debug sueltos**: cualquier console.log, console.error de debug, 
+   debugger, o comentarios tipo "
+
+4. **Lógica rara o frágil**: condicionales innecesariamente complejos, manejo de 
+   errores inconsistente (a veces try/catch, a veces no), estados que se pueden 
+   derivar pero están duplicados en el store, mutaciones directas donde debería 
+   haber inmutabilidad.
+
+5. **Problemas de arquitectura**: 
+   - Componentes que mezclan lógica de negocio con presentación
+   - Falta de separación entre lógica pura y llamadas a API/DB (dificulta testing)
+   - Inconsistencias en el manejo de tipos entre frontend y backend (mismatches 
+     de field names, interfaces duplicadas en vez de compartidas)
+   - Rutas de Express mal ordenadas (estáticas vs dinámicas)
+   - Falta de índices o queries ineficientes en Drizzle
+
+Por cada hallazgo dame:
+- Archivo y línea (aproximada)
+- Qué está mal y por qué importa
+- Severidad (crítico / moderado / cosmético)
+- Sugerencia breve de solución (sin implementarla)
+
+Termina con un resumen priorizado: qué 3-5 cosas atacaría primero.
