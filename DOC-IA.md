@@ -147,7 +147,6 @@ La prioridad es que el proyecto quede limpio, consistente y sin errores de forma
 ---
 ### 4
 
-
 Estoy desarrollando una aplicación con React, TanStack Router, Zustand y un backend en Express. Tengo un problema con el flujo de registro de usuarios con rol "seller". Cuando un usuario se registra por primera vez, es redirigido automáticamente al Dashboard. Sin embargo, en ese primer ingreso no aparecen los productos destacados, el botón "View all products" ni la sección de reseñas. Si el usuario cierra sesión e inicia sesión nuevamente con las mismas credenciales, todo aparece correctamente.
 
 En el Dashboard renderizo esas secciones solo si existe "user.business.id", obtenido desde el estado de autenticación (useAuth). Durante ese primer ingreso, "user.role" es "seller", pero "user.business.id" es "undefined". Después de volver a iniciar sesión, "user.business.id" ya tiene un valor y todo funciona correctamente.
