@@ -132,38 +132,6 @@ export const getBusinessById = async (req: Request, res: Response, next: NextFun
 
 
 
-
-export const getMyBusiness = async (
-    req: any,
-    res: Response,
-    next: NextFunction
-) => {
-    try {
-        const business = await db
-            .select()
-            .from(businesses)
-            .where(eq(businesses.owner_id, req.user.id))
-            .limit(1);
-
-        if (business.length === 0) {
-            return res.status(404).json({
-                message: "Business not found",
-            });
-        }
-
-        return res.json({
-            message: "Business fetched successfully",
-            data: {
-                ...business[0],
-                location: `${business[0].address ?? ""}, ${business[0].city ?? ""}`,
-            },
-        });
-    } catch (error) {
-        next(error);
-    }
-};
-
-
 //POST /api/businesses
 export const createBusiness = async (req: any, res: Response, next: NextFunction) => {
     try {
@@ -248,6 +216,34 @@ export const deleteBusiness = async (req: any, res: Response, next: NextFunction
 
         await db.delete(businesses).where(eq(businesses.id, id));
         return res.json({ message: "Business deleted successfully" });
+    } catch (error) {
+        next(error);
+    }
+};
+
+// GET /api/businesses/my-business
+// Obtiene el negocio del vendedor autenticado usando su token
+export const getMyBusiness = async (req: any, res: Response, next: NextFunction) => {
+    try {
+        if (req.user?.role !== "seller") {
+            return res.status(403).json({ message: "Access denied. Only sellers have a business profile." });
+        }
+
+        // Buscamos el negocio donde el owner_id sea igual al ID del usuario autenticado
+        const myBusiness = await db
+            .select()
+            .from(businesses)
+            .where(eq(businesses.owner_id, req.user.id))
+            .limit(1);
+
+        if (myBusiness.length === 0) {
+            return res.status(404).json({ message: "No business profile found for this seller." });
+        }
+
+        return res.json({
+            message: "Your business fetched successfully",
+            data: myBusiness[0],
+        });
     } catch (error) {
         next(error);
     }
