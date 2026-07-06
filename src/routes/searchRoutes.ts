@@ -3,10 +3,11 @@ import { validateQuery } from "../middleware/validations";
 import { z } from "zod";
 import { categoryEnum } from "../db/schema";
 
-// Importamos los controladores correspondientes
-import { searchBusinesses, getCategories,getNearbyBusinesses } from "../controllers/searchController";
+/**
+ * Rutas de búsqueda y filtros disponibles.
+ */
+import { searchBusinesses, getCategories, getNearbyBusinesses } from "../controllers/searchController";
 
-// Mantenemos el esquema de validación en la capa de rutas/seguridad
 const globalSearchQuerySchema = z.object({
 	q: z.string().optional().default(""),
 	category: z.enum(categoryEnum.enumValues as [string, ...string[]]).optional(),
@@ -31,7 +32,9 @@ const nearbyQuerySchema = z.object({
 
 const router = Router();
 
-// Rutas ultra compactas y legibles
+/**
+ * Endpoint de búsqueda general, categorías y negocios cercanos.
+ */
 router.get("/businesses", validateQuery(globalSearchQuerySchema), searchBusinesses);
 router.get("/categories", getCategories);
 router.get("/nearby", validateQuery(nearbyQuerySchema), getNearbyBusinesses);

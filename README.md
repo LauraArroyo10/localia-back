@@ -21,10 +21,8 @@ Jorge Miranda Loría
 06-07-2025
 
 ---
-
 ## 2. Introducción
-En si Localía es una web que permite encontrar puestos locales de alimentacion, actividades turisticas, servicios, etc. 
-Este proyecto es el backend de la aplicacion web Localía y busca conectar la base de datos con el front del proyeto.
+Este proyecto corresponde al backend de la aplicación web Localía. Su objetivo es gestionar la lógica de negocio, procesar las solicitudes realizadas por el frontend y administrar la información almacenada en la base de datos. Para ello, expone una API que permite realizar operaciones como el registro y autenticación de usuarios, la gestión de negocios y la consulta de información necesaria para el funcionamiento de la plataforma.
 ---
 
 

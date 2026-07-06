@@ -2,6 +2,9 @@ import type { NextFunction, Request, Response } from "express";
 
 import { z } from "zod";
 
+/**
+ * Valida el cuerpo de la petición contra un esquema Zod.
+ */
 export const validateBody = (schema: z.ZodTypeAny) => {
 	return (req: Request, res: Response, next: NextFunction) => {
 		try {
@@ -15,11 +18,14 @@ export const validateBody = (schema: z.ZodTypeAny) => {
 					errors: error.issues,
 				});
 			}
-            next(error)
+			next(error);
 		}
 	};
 };
-//
+
+/**
+ * Valida los parámetros de ruta contra un esquema Zod.
+ */
 export const validateParams = (schema: z.ZodTypeAny) => {
 	return (req: Request, res: Response, next: NextFunction) => {
 		try {
@@ -36,7 +42,10 @@ export const validateParams = (schema: z.ZodTypeAny) => {
 		}
 	};
 };
-//
+
+/**
+ * Valida las query parameters contra un esquema Zod.
+ */
 export const validateQuery = (schema: z.ZodTypeAny) => {
 	return (req: Request, res: Response, next: NextFunction) => {
 		try {
@@ -53,3 +62,4 @@ export const validateQuery = (schema: z.ZodTypeAny) => {
 		}
 	};
 };
+

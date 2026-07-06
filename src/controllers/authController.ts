@@ -7,14 +7,22 @@ import { generateToken } from "../utils/jwt";
 import { comparePasswords, hashPassword } from "../utils/passwords";
 import { businesses } from "../db/schema";
 
-// POST /auth/register
-// Crea un nuevo usuario, hashea su contraseña, guarda en DB y devuelve JWT + datos del usuario
+/**
+ * Registro de usuario: hashea la contraseña, guarda el usuario y devuelve JWT.
+ * Si el rol es seller, también busca el negocio asociado para devolverlo.
+ */
 export const register = async (req: Request, res: Response) => {
 	try {
 		const { name, email, password, role } = req.body;
 
+		/**
+		 * Convierte la contraseña en un hash seguro antes de guardarla.
+		 */
 		const hashedPassword = await hashPassword(password);
 
+		/**
+		 * Inserta el nuevo usuario en la base de datos y guarda solo los campos necesarios.
+		 */
 		const [user] = await db
 			.insert(users)
 			.values({
@@ -32,22 +40,30 @@ export const register = async (req: Request, res: Response) => {
 				location: users.location,
 				created_at: users.created_at,
 			});
+
 		let business = null;
 
-if (role === "seller") {
-  const biz = await db
-    .select()
-    .from(businesses)
-    .where(eq(businesses.owner_id, user.id))
-    .limit(1);
+		/**
+		 * Si el usuario es vendedor, busca en la base de datos su negocio asociado.
+		 */
+		if (role === "seller") {
+			const biz = await db
+				.select()
+				.from(businesses)
+				.where(eq(businesses.owner_id, user.id))
+				.limit(1);
 
-  business = biz[0] || null;
-}
+			business = biz[0] || null;
+		}
 
+		/**
+		 * Genera el token JWT para autenticar al usuario en futuras solicitudes.
+		 */
 		const token = await generateToken({
 			id: user.id,
 			email: user.email,
 			role: user.role,
+			avatar: user.avatar,
 		});
 
 		return res.status(201).json({
@@ -57,30 +73,39 @@ if (role === "seller") {
 			token,
 		});
 	} catch (error: any) {
-//   Postgres: código 23505 = violación de unique constraint (ej. email repetido)
-  if (error?.code === "23505") {
-    return res.status(409).json({ message: "El correo ya está registrado" });
-  }
-  console.error("Error during registration", error);
-  return res.status(500).json({ message: "El correo ya está registrado" });
-}
+		/**
+		 * Maneja el error de correo duplicado con un status claro para el cliente.
+		 */
+		if (error?.code === "23505") {
+			return res.status(409).json({ message: "El correo ya está registrado" });
+		}
+
+		console.error("Error during registration", error);
+		return res.status(500).json({ message: "El correo ya está registrado" });
+	}
 };
 
-// POST /auth/login
-// Busca usuario por email, verifica contraseña y devuelve JWT + datos del usuario
+/**
+ * Login de usuario: verifica credenciales, genera JWT y devuelve datos.
+ */
 export const login = async (req: Request, res: Response) => {
 	try {
 		const { email, password } = req.body;
 
+		/**
+		 * Busca al usuario por correo electrónico para validar credenciales.
+		 */
 		const user = await db.query.users.findFirst({
 			where: eq(users.email, email),
 		});
-console.log("Email recibido:", email);
-console.log("Usuario encontrado:", user);
+
 		if (!user) {
 			return res.status(401).json({ message: "Invalid credentials" });
 		}
 
+		/**
+		 * Compara la contraseña enviada con el hash almacenado.
+		 */
 		const isPasswordValid = await comparePasswords(password, user.password);
 
 		if (!isPasswordValid) {
@@ -89,20 +114,27 @@ console.log("Usuario encontrado:", user);
 
 		let business = null;
 
-if (user.role === "seller") {
-  const biz = await db
-    .select()
-    .from(businesses)
-    .where(eq(businesses.owner_id, user.id))
-    .limit(1);
+		/**
+		 * Si el usuario es seller, trae su negocio asociado para la respuesta.
+		 */
+		if (user.role === "seller") {
+			const biz = await db
+				.select()
+				.from(businesses)
+				.where(eq(businesses.owner_id, user.id))
+				.limit(1);
 
-  business = biz[0] || null;
-}
+			business = biz[0] || null;
+		}
 
+		/**
+		 * Genera el token JWT con datos del usuario autenticado.
+		 */
 		const token = await generateToken({
 			id: user.id,
 			email: user.email,
 			role: user.role,
+			avatar: user.avatar,
 		});
 
 		return res.status(200).json({

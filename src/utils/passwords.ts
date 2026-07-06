@@ -1,18 +1,20 @@
-//bcryp for secure password
 import bcrypt from "bcrypt";
-//env config  BCRYPT ROUNDS settings
 import env from "../../env";
 
+/**
+ * Hashea una contraseña usando el factor de costo definido en el entorno.
+ */
 export const hashPassword = async (password: string) => {
-	//parametros son el passwrod que entra aca y lacatidad e veces que pasa esto por parametros
 	return bcrypt.hash(password, env.BCRYPT_ROUNDS);
 };
 
-//compare hash: compare if a plain text password matches a stored hash during loging to check if user entered correct passwrod
-
+/**
+ * Compara una contraseña en texto plano con un hash almacenado.
+ */
 export const comparePasswords = async (
 	password: string,
 	hashedPassword: string,
 ) => {
 	return bcrypt.compare(password, hashedPassword);
 };
+

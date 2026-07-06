@@ -4,9 +4,14 @@ import { z } from "zod";
 import { login, register } from "../controllers/authController";
 import { validateBody } from "../middleware/validations";
 
+/**
+ * Rutas de autenticación: registro e inicio de sesión.
+ */
 const router = Router();
 
-// Schemas de validación
+/**
+ * Schemas de validación para registro y login.
+ */
 const registerSchema = z.object({
 	name: z.string().min(1, "El nombre es requerido"),
 	email: z.email("Correo inválido"),
@@ -25,14 +30,12 @@ const loginSchema = z.object({
 	password: z.string().min(1, "La contraseña es requerida"),
 });
 
-// POST /auth/register
+/**
+ * POST /auth/register - Registra un nuevo usuario.
+ * POST /auth/login - Inicia sesión y devuelve JWT.
+ * GET /auth/me - Devuelve datos del usuario autenticado.
+ */
 router.post("/register", validateBody(registerSchema), register);
-
-// POST /auth/login
 router.post("/login", validateBody(loginSchema), login);
-
-// GET /auth/me
-// Header: Authorization: Bearer <token>
-// Devuelve: datos del usuario autenticado (para NavBar y rutas protegidas)
 
 export default router;

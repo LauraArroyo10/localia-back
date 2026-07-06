@@ -2,13 +2,12 @@ import { Request, Response, NextFunction } from "express";
 import { and, eq, ilike, sql, desc } from "drizzle-orm";
 import { db } from "../db/connection";
 import { businesses, reviews } from "../db/schema";
-import {z} from "zod"
-import {categoryEnum , businessTypeEnum} from "../db/schema"
+import { z } from "zod";
+import { categoryEnum, businessTypeEnum } from "../db/schema";
 
-
-
-// ─── ESQUEMAS DE VALIDACIÓN DE ZOD 
-
+/**
+ * Esquemas de validación Zod para crear y actualizar negocios.
+ */
 export const createBusinessBodySchema = z.object({
     name: z.string().min(2, "El nombre debe tener al menos 2 caracteres"),
     description: z.string().min(10, "La descripción debe tener al menos 10 caracteres").optional().nullable(),
@@ -38,7 +37,9 @@ export const businessQuerySchema = z.object({
 });
 
 
-//GET /api/businesses
+/**
+ * Lista negocios con filtros dinámicos y paginación.
+ */
 export const getBusinesses = async (req: Request, res: Response, next: NextFunction) => {
     try {
         const { page, limit, category, type, city, search } = req.query as any;
@@ -74,7 +75,9 @@ export const getBusinesses = async (req: Request, res: Response, next: NextFunct
 
 
 
-//GET /api/businesses/featured
+/**
+ * Recupera los negocios destacados ordenados por calificación promedio.
+ */
 export const getFeaturedBusinesses = async (req: Request, res: Response, next: NextFunction) => {
     try {
         const featured = await db
@@ -101,7 +104,9 @@ export const getFeaturedBusinesses = async (req: Request, res: Response, next: N
     }
 };
 
-//GET /api/businesses/:id
+/**
+ * Obtiene un negocio por su ID e incluye cálculos de reseñas.
+ */
 export const getBusinessById = async (req: Request, res: Response, next: NextFunction) => {
     try {
         const { id } = req.params as any;
@@ -132,39 +137,9 @@ export const getBusinessById = async (req: Request, res: Response, next: NextFun
 
 
 
-
-export const getMyBusiness = async (
-    req: any,
-    res: Response,
-    next: NextFunction
-) => {
-    try {
-        const business = await db
-            .select()
-            .from(businesses)
-            .where(eq(businesses.owner_id, req.user.id))
-            .limit(1);
-
-        if (business.length === 0) {
-            return res.status(404).json({
-                message: "Business not found",
-            });
-        }
-
-        return res.json({
-            message: "Business fetched successfully",
-            data: {
-                ...business[0],
-                location: `${business[0].address ?? ""}, ${business[0].city ?? ""}`,
-            },
-        });
-    } catch (error) {
-        next(error);
-    }
-};
-
-
-//POST /api/businesses
+/**
+ * Crea un nuevo negocio para el vendedor autenticado.
+ */
 export const createBusiness = async (req: any, res: Response, next: NextFunction) => {
     try {
         if (req.user?.role !== "seller") {
@@ -189,7 +164,9 @@ export const createBusiness = async (req: any, res: Response, next: NextFunction
     }
 };
 
-//PUT /api/businesses/:id
+/**
+ * Actualiza un negocio existente solo si el vendedor es su propietario.
+ */
 export const updateBusiness = async (req: any, res: Response, next: NextFunction) => {
     try {
         const { id } = req.params as any;
@@ -227,7 +204,9 @@ export const updateBusiness = async (req: any, res: Response, next: NextFunction
     }
 };
 
-//DELETE /api/businesses/:id
+/**
+ * Elimina un negocio solo si el vendedor autenticado es el propietario.
+ */
 export const deleteBusiness = async (req: any, res: Response, next: NextFunction) => {
     try {
         const { id } = req.params as any;
@@ -248,6 +227,37 @@ export const deleteBusiness = async (req: any, res: Response, next: NextFunction
 
         await db.delete(businesses).where(eq(businesses.id, id));
         return res.json({ message: "Business deleted successfully" });
+    } catch (error) {
+        next(error);
+    }
+};
+
+/**
+ * Devuelve el negocio asociado al vendedor autenticado.
+ */
+export const getMyBusiness = async (req: any, res: Response, next: NextFunction) => {
+    try {
+        if (req.user?.role !== "seller") {
+            return res.status(403).json({ message: "Access denied. Only sellers have a business profile." });
+        }
+
+        /**
+         * Busca el negocio donde el owner_id coincida con el usuario autenticado.
+         */
+        const myBusiness = await db
+            .select()
+            .from(businesses)
+            .where(eq(businesses.owner_id, req.user.id))
+            .limit(1);
+
+        if (myBusiness.length === 0) {
+            return res.status(404).json({ message: "No business profile found for this seller." });
+        }
+
+        return res.json({
+            message: "Your business fetched successfully",
+            data: myBusiness[0],
+        });
     } catch (error) {
         next(error);
     }
