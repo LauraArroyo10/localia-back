@@ -8,12 +8,17 @@ import {
   markHelpful,
   deleteReview,
 } from "../controllers/reviewsController";
-import { authenticateToken,authenticateTokenOptional } from "../middleware/auth";
+import { authenticateToken, authenticateTokenOptional } from "../middleware/auth";
 import { validateBody, validateParams, validateQuery } from "../middleware/validations";
 
+/**
+ * Router para reseñas: listado, creación, edición, borrado y marcado de utilidad.
+ */
 const router = Router({ mergeParams: true });
 
-// Schemas
+/**
+ * Esquemas de validación para rutas de reseñas.
+ */
 const reviewIdSchema = z.object({
   reviewId: z.string(),
 });
@@ -22,19 +27,27 @@ const businessIdSchema = z.object({
   id: z.string(),
 });
 
+/**
+ * Datos requeridos para crear una reseña.
+ */
 const createReviewSchema = z.object({
   rating: z.number(),
   title: z.string(),
   body: z.string(),
 });
 
+/**
+ * Datos permitidos para actualizar una reseña.
+ */
 const updateReviewSchema = z.object({
   rating: z.number(),
   title: z.string(),
   body: z.string(),
 });
 
-
+/**
+ * Paginación opcional para listados de reseñas.
+ */
 const paginationSchema = z.object({
   page: z.string().optional(),
   limit: z.string().optional(),
@@ -42,7 +55,9 @@ const paginationSchema = z.object({
 
 
 
-// GET /businesses/:id/reviews
+/**
+ * Obtiene reseñas de un negocio. El token es opcional.
+ */
 router.get(
   "/:id/reviews",
   authenticateTokenOptional,
@@ -51,8 +66,9 @@ router.get(
   getReviews
 );
 
-
-// POST /businesses/:id/reviews
+/**
+ * Crea una reseña para un negocio autenticado.
+ */
 router.post(
   "/:id/reviews",
   authenticateToken,
@@ -61,7 +77,9 @@ router.post(
   createReview
 );
 
-// PUT /reviews/:reviewId
+/**
+ * Actualiza una reseña existente del usuario.
+ */
 router.put(
   "/reviews/:reviewId",
   authenticateToken,
@@ -70,7 +88,9 @@ router.put(
   updateReview
 );
 
-// DELETE /reviews/:reviewId
+/**
+ * Elimina una reseña de forma segura.
+ */
 router.delete(
   "/reviews/:reviewId",
   authenticateToken,
@@ -78,7 +98,9 @@ router.delete(
   deleteReview
 );
 
-// POST /reviews/:reviewId/helpful
+/**
+ * Marca una reseña como útil por parte del usuario autenticado.
+ */
 router.post(
   "/reviews/:reviewId/helpful",
   authenticateToken,

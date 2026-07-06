@@ -12,13 +12,11 @@ const businessIdSchema = z.object({
   businessId: z.string().uuid(),
 });
 
-// GET /users/me/favorites
+/**
+ * Rutas para gestionar la lista de favoritos del usuario autenticado.
+ */
 router.get("/me/favorites", authenticateToken, getFavorites);
-
-// POST /users/me/favorites/:businessId
 router.post("/me/favorites/:businessId", authenticateToken, validateParams(businessIdSchema), addFavorite);
-
-// DELETE /users/me/favorites/:businessId
 router.delete("/me/favorites/:businessId", authenticateToken, validateParams(businessIdSchema), removeFavorite);
 
 export default router;

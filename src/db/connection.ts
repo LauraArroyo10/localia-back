@@ -3,6 +3,9 @@ import { Pool } from "pg";
 import env from "../../env";
 import * as schema from "./schema";
 
+/**
+ * Crea y configura la conexión con la base de datos PostgreSQL.
+ */
 const createPool = () => {
 	return new Pool({
 		connectionString: env.DATABASE_URL,
@@ -11,9 +14,13 @@ const createPool = () => {
 		ssl: {
 			rejectUnauthorized: false,
 		},
-		//idleTimeoutMillis: 0,
-		//keepAlive: true,
-		//keepAliveInitialDelayMillis: 10000
+		/**
+		 * Opciones adicionales del Pool. Mantener comentadas
+		 * hasta que sea necesario ajustar el comportamiento de la conexión.
+		 */
+		/* idleTimeoutMillis: 0,
+		keepAlive: true,
+		keepAliveInitialDelayMillis: 10000 */
 	});
 };
 

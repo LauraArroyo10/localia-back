@@ -3,7 +3,9 @@ import { and, eq, ilike, sql, desc } from "drizzle-orm";
 import { db } from "../db/connection";
 import { businesses, categoryEnum, reviews } from "../db/schema";
 
-//GET /api/search/businesses (Búsqueda Full-Text y filtros)
+/**
+ * Busca negocios con texto libre y filtros opcionales.
+ */
 export const searchBusinesses = async (req: Request, res: Response, next: NextFunction) => {
 	try {
 		const { q, category, type, city } = req.query as any;
@@ -11,6 +13,9 @@ export const searchBusinesses = async (req: Request, res: Response, next: NextFu
 		const limit = Number(req.query.limit) || 10;
 		const offset = (page - 1) * limit;
 
+		/**
+		 * Construye condiciones WHERE dinámicas según los filtros activos.
+		 */
 		const conditions = [];
 
 		if (category) conditions.push(eq(businesses.category, category));
@@ -27,6 +32,9 @@ export const searchBusinesses = async (req: Request, res: Response, next: NextFu
 
 		const whereClause = conditions.length > 0 ? and(...conditions) : undefined;
 
+		/**
+		 * Consulta los negocios con agregados de calificación y conteo de reseñas.
+		 */
 		const results = await db
 			.select({
 				id: businesses.id,
@@ -57,7 +65,9 @@ export const searchBusinesses = async (req: Request, res: Response, next: NextFu
 	}
 };
 
-// GET /api/search/categories (Lista dinámica de categorías)
+/**
+ * Devuelve las categorías disponibles registradas en el esquema.
+ */
 export const getCategories = async (req: Request, res: Response, next: NextFunction) => {
 	try {
 		const categories = categoryEnum.enumValues;
@@ -71,7 +81,9 @@ export const getCategories = async (req: Request, res: Response, next: NextFunct
 	}
 };
 
-// GET /api/search/nearby (Negocios cercanos con suficientes reseñas)
+/**
+ * Busca negocios cercanos dentro de un radio y con mínimo de reseñas.
+ */
 export const getNearbyBusinesses = async (req: Request, res: Response, next: NextFunction) => {
 	try {
 		const lat = Number(req.query.lat);
@@ -87,6 +99,9 @@ export const getNearbyBusinesses = async (req: Request, res: Response, next: Nex
 			return res.status(400).json({ message: "lat and lng are required and must be valid numbers" });
 		}
 
+		/**
+		 * Calcula la distancia geográfica entre la ubicación del usuario y cada negocio.
+		 */
 		const distanceExpr = sql<number>`
 			(6371 * acos(
 				LEAST(1.0, GREATEST(-1.0,
@@ -99,6 +114,9 @@ export const getNearbyBusinesses = async (req: Request, res: Response, next: Nex
 
 		const whereClause = category ? eq(businesses.category, category as any) : undefined;
 
+		/**
+		 * Busca los negocios cercanos y filtra por cantidad mínima de reseñas.
+		 */
 		const results = await db
 			.select({
 				id: businesses.id,
@@ -131,5 +149,4 @@ export const getNearbyBusinesses = async (req: Request, res: Response, next: Nex
 	} catch (error) {
 		next(error);
 	}
-
 };

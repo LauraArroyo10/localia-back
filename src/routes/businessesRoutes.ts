@@ -31,20 +31,23 @@ router.get("/", validateQuery(businessQuerySchema), getBusinesses);
 
 router.get("/:id", validateParams(idParamSchema), getBusinessById);
 
+/**
+ * Rutas de negocio con carga de imagen y validación de datos.
+ */
 router.post(
-    "/", 
-    authenticateToken, 
-    uploadBusinessImage.single("image"), // 1. Procesa y guarda el archivo en 'uploads/businesses'
-    validateBody(createBusinessBodySchema), // 2. Valida los campos de texto restantes
+    "/",
+    authenticateToken,
+    uploadBusinessImage.single("image"),
+    validateBody(createBusinessBodySchema),
     createBusiness
 );
 
 router.put(
-    "/:id", 
-    authenticateToken, 
-    validateParams(idParamSchema), 
-    uploadBusinessImage.single("image"), // 1. Intercepta el archivo binario si viene en la edición
-    validateBody(updateBusinessBodySchema), // 2. Valida las propiedades editadas
+    "/:id",
+    authenticateToken,
+    validateParams(idParamSchema),
+    uploadBusinessImage.single("image"),
+    validateBody(updateBusinessBodySchema),
     updateBusiness
 );
 

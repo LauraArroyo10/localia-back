@@ -4,6 +4,9 @@ import express, { type Application } from "express";
 import helmet from "helmet";
 import morgan from "morgan";
 
+/**
+ * Configura la aplicación Express, middleware de seguridad y rutas estáticas.
+ */
 const app: Application = express();
 
 app.use(cors());

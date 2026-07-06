@@ -16,6 +16,9 @@ import {
 
 const router = Router();
 
+/**
+ * Rutas de productos: listado por negocio, creación y borrado.
+ */
 router.get("/:businessId", getProductsByBusiness);
 
 router.post(

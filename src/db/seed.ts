@@ -2,6 +2,9 @@ import { hashPassword } from "../utils/passwords";
 import { db } from "./connection";
 import { users } from "./schema";
 
+/**
+ * Script de seed para poblar datos iniciales en la base de datos.
+ */
 const seed = async () => {
 	const appStage = process.env.APP_STAGE;
 
@@ -33,8 +36,6 @@ const seed = async () => {
 				password: hashedPassword,
 				role: "seller",
 			},
-			
-		
 		]);
 
 		console.log("Seed completed successfully!");

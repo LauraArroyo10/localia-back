@@ -15,24 +15,33 @@ export const createProductBodySchema = z.object({
 	price: z.string().min(1, "Price is required"),
 });
 
-//crear producto
+/**
+ * Crea un producto nuevo para un vendedor autenticado.
+ * Verifica la propiedad del negocio y guarda la imagen asociada.
+ */
 export const createProduct = async (
 	req: any,
 	res: Response,
-	next: NextFunction
+	next: NextFunction,
 ) => {
 	try {
-		// Solo los vendedores pueden crear productos
+		/**
+		 * Requiere rol seller para poder publicar productos.
+		 */
 		if (req.user?.role !== "seller") {
 			return res.status(403).json({
 				message: "Only sellers can create products",
 			});
 		}
 
-		// Validar datos enviados
+		/**
+		 * Valida el cuerpo de la solicitud con el esquema definido.
+		 */
 		const parsed = createProductBodySchema.parse(req.body);
 
-		// Buscar el negocio
+		/**
+		 * Busca el negocio que recibimos en el body para asociar el producto.
+		 */
 		const business = await db
 			.select()
 			.from(businesses)
@@ -45,14 +54,18 @@ export const createProduct = async (
 			});
 		}
 
-		// Verificar que el negocio pertenezca al usuario
+		/**
+		 * Confirma que el negocio pertenece al usuario autenticado.
+		 */
 		if (business[0].owner_id !== req.user.id) {
 			return res.status(403).json({
 				message: "Not your business",
 			});
 		}
 
-		// Obtener la ruta de la imagen subida
+		/**
+		 * Crea la URL local de la imagen en caso de que se haya subido un archivo.
+		 */
 		const imageUrl = req.file
 			? `/uploads/products/${req.file.filename}`
 			: null;
@@ -63,7 +76,9 @@ export const createProduct = async (
 			});
 		}
 
-		// Guardar producto
+		/**
+		 * Inserta el producto en la base de datos y devuelve el registro creado.
+		 */
 		const [newProduct] = await db
 			.insert(products)
 			.values({
@@ -84,11 +99,13 @@ export const createProduct = async (
 	}
 };
 
-// Obtener productos de un negocio
+/**
+ * Obtiene los productos de un negocio específico.
+ */
 export const getProductsByBusiness = async (
 	req: Request,
 	res: Response,
-	next: NextFunction
+	next: NextFunction,
 ) => {
 	try {
 		const businessId = req.params.businessId as string;
@@ -107,23 +124,29 @@ export const getProductsByBusiness = async (
 	}
 };
 
-// Eliminar producto
+/**
+ * Elimina un producto sólo si el usuario autenticado es dueño del negocio.
+ */
 export const deleteProduct = async (
 	req: any,
 	res: Response,
-	next: NextFunction
+	next: NextFunction,
 ) => {
 	try {
 		const { id } = req.params;
 
-		// Solo los vendedores pueden eliminar productos
+		/**
+		 * Requiere rol seller para borrar productos.
+		 */
 		if (req.user?.role !== "seller") {
 			return res.status(403).json({
 				message: "Only sellers can delete products",
 			});
 		}
 
-		// Buscar el producto
+		/**
+		 * Busca el producto por su ID.
+		 */
 		const product = await db
 			.select()
 			.from(products)
@@ -136,7 +159,9 @@ export const deleteProduct = async (
 			});
 		}
 
-		// Buscar el negocio al que pertenece
+		/**
+		 * Verifica que exista el negocio del producto.
+		 */
 		const business = await db
 			.select()
 			.from(businesses)
@@ -149,7 +174,9 @@ export const deleteProduct = async (
 			});
 		}
 
-		// Verificar que el negocio sea del usuario autenticado
+		/**
+		 * Verifica que el negocio pertenezca al usuario autenticado.
+		 */
 		if (business[0].owner_id !== req.user.id) {
 			return res.status(403).json({
 				message: "You are not allowed to delete this product",

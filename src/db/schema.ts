@@ -11,8 +11,9 @@ import {
 } from "drizzle-orm/pg-core";
 import { createInsertSchema, createSelectSchema } from "drizzle-zod";
 
-// ─── Enums ────────────────────────────────────────────────────────────────────
-
+/**
+ * Enumeraciones de roles, tipos de negocio y categorías.
+ */
 export const roleEnum = pgEnum("role", ["tourist", "seller", "guest"]);
 
 export const businessTypeEnum = pgEnum("business_type", [
@@ -36,7 +37,9 @@ export const categoryEnum = pgEnum("category", [
 	"Town",
 ]);
 
-// ─── Users ────────────────────────────────────────────────────────────────────
+/**
+ * Tabla de usuarios con datos de perfil y credenciales.
+ */
 
 export const users = pgTable("users", {
 	id: uuid("id").primaryKey().defaultRandom(),
@@ -54,7 +57,9 @@ export type User = typeof users.$inferSelect;
 export const insertUserSchema = createInsertSchema(users);
 export const selectUserSchema = createSelectSchema(users);
 
-// ─── Businesses ───────────────────────────────────────────────────────────────
+/**
+ * Tabla de negocios con ubicación, categoría y tipo.
+ */
 
 export const businesses = pgTable("businesses", {
 	id: uuid("id").primaryKey().defaultRandom(),
@@ -79,7 +84,9 @@ export type Business = typeof businesses.$inferSelect;
 export const insertBusinessSchema = createInsertSchema(businesses);
 export const selectBusinessSchema = createSelectSchema(businesses);
 
-// ─── Reviews ──────────────────────────────────────────────────────────────────
+/**
+ * Tabla de reseñas con puntaje, texto y votos de utilidad.
+ */
 
 export const reviews = pgTable("reviews", {
 	id: uuid("id").primaryKey().defaultRandom(),
@@ -103,7 +110,9 @@ export const selectReviewSchema = createSelectSchema(reviews);
 
 
 
-// ─── Review Helpful Votes ───────────────────────────────────────────────────
+/**
+ * Tabla de votos útiles para reseñas, asegurando un único voto por usuario.
+ */
 
 export const reviewHelpfulVotes = pgTable(
 	"review_helpful_votes",
@@ -130,7 +139,10 @@ export const reviewHelpfulVotesRelations = relations(reviewHelpfulVotes, ({ one 
 	review: one(reviews, { fields: [reviewHelpfulVotes.review_id], references: [reviews.id] }),
 	user: one(users, { fields: [reviewHelpfulVotes.user_id], references: [users.id] }),
 }));
-// ─── Favorites ────────────────────────────────────────────────────────────────
+
+/**
+ * Tabla de favoritos que relaciona usuarios con negocios.
+ */
 
 export const favorites = pgTable("favorites", {
 	id: uuid("id").primaryKey().defaultRandom(),
@@ -147,7 +159,9 @@ export type Favorite = typeof favorites.$inferSelect;
 export const insertFavoriteSchema = createInsertSchema(favorites);
 export const selectFavoriteSchema = createSelectSchema(favorites);
 
-// ─── Products ────────────────────────────────────────────────────────────────
+/**
+ * Tabla de productos asociados a negocios.
+ */
 
 export const products = pgTable("products", {
 	id: uuid("id").primaryKey().defaultRandom(),
@@ -169,7 +183,9 @@ export type Product = typeof products.$inferSelect;
 export const insertProductSchema = createInsertSchema(products);
 export const selectProductSchema = createSelectSchema(products);
 
-// ─── Relations ────────────────────────────────────────────────────────────────
+/**
+ * Relaciones entre entidades del esquema de la base de datos.
+ */
 
 export const usersRelations = relations(users, ({ many }) => ({
 	businesses: many(businesses),

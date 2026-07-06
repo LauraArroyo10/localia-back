@@ -5,8 +5,9 @@ import db from "../db/connection";
 import { favorites, businesses } from "../db/schema";
 import type { AuthenticatedRequest } from "../middleware/auth";
 
-// GET /users/me/favorites
-// Lista los negocios favoritos del usuario autenticado
+/**
+ * Lista los negocios favoritos del usuario autenticado.
+ */
 export const getFavorites = async (req: AuthenticatedRequest, res: Response) => {
 	try {
 		const userId = req.user?.id;
@@ -15,6 +16,9 @@ export const getFavorites = async (req: AuthenticatedRequest, res: Response) => 
 			return res.status(401).json({ message: "No autenticado" });
 		}
 
+		/**
+		 * Recupera los favoritos junto con los datos del negocio relacionado.
+		 */
 		const userFavorites = await db.query.favorites.findMany({
 			where: eq(favorites.user_id, userId),
 			with: {
@@ -22,6 +26,9 @@ export const getFavorites = async (req: AuthenticatedRequest, res: Response) => 
 			},
 		});
 
+		/**
+		 * Da formato a la respuesta omitiendo datos innecesarios.
+		 */
 		const formattedFavorites = userFavorites.map((f) => ({
 			favoriteId: f.id,
 			businessId: f.business.id,
@@ -40,8 +47,9 @@ export const getFavorites = async (req: AuthenticatedRequest, res: Response) => 
 	}
 };
 
-// POST /users/me/favorites/:businessId
-// Agrega un negocio a favoritos
+/**
+ * Agrega un negocio a la lista de favoritos del usuario.
+ */
 export const addFavorite = async (req: AuthenticatedRequest, res: Response) => {
 	try {
 		const userId = req.user?.id;
@@ -51,6 +59,9 @@ export const addFavorite = async (req: AuthenticatedRequest, res: Response) => {
 			return res.status(401).json({ message: "No autenticado" });
 		}
 
+		/**
+		 * Evita duplicar favoritos cuando ya existe el registro.
+		 */
 		const existing = await db.query.favorites.findFirst({
 			where: and(eq(favorites.user_id, userId), eq(favorites.business_id, businessId)),
 		});
@@ -71,8 +82,9 @@ export const addFavorite = async (req: AuthenticatedRequest, res: Response) => {
 	}
 };
 
-// DELETE /users/me/favorites/:businessId
-// Elimina un negocio de favoritos
+/**
+ * Elimina un favorito existente del usuario autenticado.
+ */
 export const removeFavorite = async (req: AuthenticatedRequest, res: Response) => {
 	try {
 		const userId = req.user?.id;
@@ -82,6 +94,9 @@ export const removeFavorite = async (req: AuthenticatedRequest, res: Response) =
 			return res.status(401).json({ message: "No autenticado" });
 		}
 
+		/**
+		 * Verifica que el favorito existe antes de borrar.
+		 */
 		const existing = await db.query.favorites.findFirst({
 			where: and(eq(favorites.user_id, userId), eq(favorites.business_id, businessId)),
 		});
