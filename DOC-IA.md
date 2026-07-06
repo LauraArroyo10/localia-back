@@ -21,6 +21,8 @@
 - Investigacion de librerias
 - Generacion de mockdata
 - Sugerencias de detalles esteticos 
+-Corrección de persistencia de sesión
+
 ---
 
 ### Ejemplos de prompts
@@ -165,3 +167,34 @@ Una compañera me recomendó usar la librería Sonner para mostrar notificacione
 
 ---
 ### 7
+Estoy usando Express, Drizzle ORM y Neon. Tengo un problema en mi businessController.ts: cuando un usuario inicia sesión y busca algo, el endpoint /api/businesses siempre le devuelve su propio negocio (el de su token de sesión) en lugar de mostrar todos los negocios de la base de datos. ¿Cómo modifico el controlador para que diferencie una búsqueda global de un perfil privado sin romper las rutas del grupo?
+---
+### 8
+En mi frontend de React tengo un estado global con Zustand es recomendable? Cuando el usuario inicia sesión guardo su avatarUrl (la foto de perfil), pero si el usuario le da F5 (recargar página), el avatar se borra y se pone en undefined, rompiendo el componente. ¿Cómo hago para que Zustand guarde esta imagen en el almacenamiento de la sesión y no se pierda al recargar?
+---
+### 9
+Para la sección de "Editar Comercio" usamos un formulario con peticiones PUT a la base de datos. Pero para la pantalla de resultados ocupo hacer algo diferente: crear un componente llamado ProfileView que reciba los datos directamente por props y los pinte de inmediato, sin usar formularios ni mutaciones pesadas. ¿Cómo estructuro este componente en React y por qué es mejor hacerlo así para evitar re-renderizados y conflictos con el código de que ya temgo?
+---
+### 10
+Tengo un error de TypeScript en mi componente de perfil. Si un negocio en la base de datos de Neon no tiene una foto guardada (avatarUrl o bannerImgUrl vienen vacíos o nulos), la app se cae con el error "Cannot read properties of undefined". ¿Cómo protejo mi archivo results.tsx usando operadores lógicos (||) para que ponga un string vacío o una imagen por defecto si esos datos no existen?
+---
+### 11
+Quiero investigar bien Zustand antes de usarlo, basándome en la 
+documentación oficial (zustand.docs.pmnd.rs y el repo de pmndrs en 
+GitHub), no en blogs sueltos.
+
+Tengo que manejar estado global por primera vez, para el tema de 
+autenticación (login, registro, logout, usuario actual). La opción que 
+me sugieren es Context API, pero no termino de entender bien cómo 
+funciona useContext, así que estoy evaluando usar Zustand en su lugar.
+
+Explicame qué es Zustand, por qué existe, y por qué podría resultarme 
+más fácil de entender que Context para alguien que recién arranca con 
+manejo de estado global. Después mostrame cómo se implementaría paso a 
+paso (create, set, get, selectores, tipado en TypeScript, acciones 
+async), usando un caso de auth como ejemplo.
+
+Por último, quiero que seas honesta con las ventajas y desventajas 
+reales frente a Context — no me lo vendas como si fuera la solución 
+para todo.
+
