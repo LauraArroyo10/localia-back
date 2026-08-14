@@ -12,22 +12,17 @@ import favoritesRoutes from "./src/routes/favoritesRoutes";
 import productsRoutes from "./src/routes/productsRoutes";
 import userRoutes from "./src/routes/userRoutes"; // O la ruta correspondiente de importación
 
-
-app.use("/auth", authRoutes);
+app.use("/api/auth", authRoutes);
 app.use("/api/businesses", businessRoutes);
 app.use("/api/businesses", reviewsRoutes);
 app.use("/api/search", searchRoutes);
-app.use("/users", favoritesRoutes);
-app.use("/api/users", userRoutes); // 👈 ¡REGISTRAMOS tus rutas de usuario reales!
+app.use("/api/users", userRoutes);
 app.use("/api/products", productsRoutes);
+app.use("/api/uploads", express.static("uploads"));  
 
 
-app.use("/uploads", express.static("uploads"));
+app.use("api/uploads", express.static("uploads"));
 
-app.use("/api", (_req, res) => {
-	res.status(404).json({ message: "Endpoint not found" });
-});
 
-app.listen(env.PORT, () => {
-	console.log(`Server running on port ${env.PORT}`);
-});
+app.use("/api", (_req, res) => {res.status(404).json({ message: "Endpoint not found" });});
+app.listen(env.PORT, () => {console.log(`Server running on port ${env.PORT}`);});
